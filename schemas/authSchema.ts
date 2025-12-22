@@ -1,9 +1,20 @@
 import * as yup from 'yup';
-
+const today = new Date();
+const oneYearAgo = new Date();
+oneYearAgo.setFullYear(today.getFullYear() - 1);
 export const signUpSchema = yup.object().shape({
-    fullName: yup.string().required("Full name is required").min(3, "Full name must be at least 3 characters"),
-    username: yup.string().required("Username is required").min(3, "Username must be at least 3 characters"),
-    phoneNumber: yup.string().required("Phone number is required").matches(/^\+?[1-9]\d{1,14}$/, "Invalid phone number"),
+    fullName: yup
+        .string()
+        .required("Full name is required")
+        .trim()
+        .min(3, "Full name must be at least 3 characters")
+        .matches(/\S/, "Full name cannot be only spaces"),
+    dateOfBirth: yup
+        .date()
+        .required("Date of birth is required")
+        .max(today, "Date of birth cannot be in the future")
+        .max(oneYearAgo, "You must be at least 1 year old"),
+    phoneNumber: yup.string().required("Phone number is required").matches(/^\+?[0-9]\d{10,13}$/, "Invalid phone number"),
     email: yup
         .string()
         .trim()

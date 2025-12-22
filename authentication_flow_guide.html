@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Flow Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --secondary: #4b5563;
+            --accent: #10b981;
+            --bg: #ffffff;
+            --card-bg: #f9fafb;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--primary);
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: var(--bg);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 24px;
+            background: var(--accent);
+            margin-right: 12px;
+            border-radius: 4px;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--secondary);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            font-weight: 700;
+            color: var(--accent);
+            margin-right: 8px;
+        }
+
+        .highlight {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .note {
+            background: #ecfdf5;
+            border-left: 4px solid var(--accent);
+            padding: 16px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 0.875rem;
+            color: #9ca3af;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+        }
+
+        @media print {
+            body { margin: 0; padding: 20px; }
+            .no-print { display: none; }
+        }
+
+        .print-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <button class="print-btn no-print" onclick="window.print()">Save as PDF / Print</button>
+
+    <h1>The Authentication Journey</h1>
+    <p>A simple guide to how your Next.js + MongoDB authentication system works.</p>
+
+    <div class="card">
+        <h2><span class="step-number">01.</span> The Secret Connection (lib/mongodb.ts)</h2>
+        <p>Before any data can be saved, we need a map to the storage room (MongoDB). We use <span class="highlight">"Lazy Connection"</span>—the app only connects when it actually needs to perform a task. This keeps the app fast and prevents random crashes if the database is busy.</p>
+    </div>
+
+    <div class="card">
+        <h2><span class="step-number">02.</span> The Vault Door (models/User.ts)</h2>
+        <p>This defines the rules of who can enter. Most importantly, it handles <span class="highlight">Password Hashing</span>. When you enter "123456", we use <span class="highlight">bcrypt</span> to turn it into a long string like "$2a$10$X...". This ensures no one can ever see your real password, even in the database.</p>
+    </div>
+
+    <div class="card">
+        <h2><span class="step-number">03.</span> Creating the Account (api/auth/signup)</h2>
+        <p>When you click "Sign Up", the "Route Handler" acts as the library clerk. It:</p>
+        <ul>
+            <li>Validates your inputs (Is the email valid? Is the name empty?).</li>
+            <li>Checks if you already have an account.</li>
+            <li>Saves your info securely.</li>
+            <li>Hands you a <span class="highlight">JWT (JSON Web Token)</span>.</li>
+        </ul>
+    </div>
+
+    <div class="note">
+        <strong>The Golden Ticket (JWT):</strong> Think of this as a wristband at a concert. You show your ID once at the door, get the wristband, and then you can go in and out of the VIP areas just by showing the wristband.
+    </div>
+
+    <div class="card">
+        <h2><span class="step-number">04.</span> The Bouncer (api/auth/signin)</h2>
+        <p>When you come back to log in, the bouncer compares the password you typed with the hashed version in the vault. If they match, you get a fresh Golden Ticket!</p>
+    </div>
+
+    <div class="card" style="border-color: #fca5a5; background: #fff5f5;">
+        <h2>The Turbopack Challenge</h2>
+        <p>We switched from Turbopack back to <span class="highlight">Webpack</span> (using the --webpack flag). Turbopack is new and fast, but it sometimes gets confused by complex libraries like Mongoose. Webpack is the "Grandmaster" that knows how to handle everything perfectly.</p>
+    </div>
+
+    <div class="footer">
+        Created for the Authenticated Form Project &bull; 2025
+    </div>
+</body>
+</html>

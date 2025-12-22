@@ -62,7 +62,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
             </header> */}
 
             {/* Main */}
-            <main className="relative z-10 flex min-h-screen items-center justify-center pt-24 pb-12 px-4">
+            <main className="relative z-10 flex min-h-screen items-center justify-center pt-6 pb-8 px-4">
                 {children}
             </main>
 

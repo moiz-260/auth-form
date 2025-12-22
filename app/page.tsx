@@ -1,12 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import AuthLayout from "@/components/layout/AuthLayout";
 import SignUpForm from "@/components/auth/authContainer";
+// import LoadingScreen from "@/components/LoadingScreen";
 export default function LandingPage() {
+  // const [loading, setLoading] = React.useState(true);
+  // useEffect(() => {
+  //   // Simulate data fetching
+  //   const timer = setTimeout(() => setLoading(false), 3000);
+  //   return () => clearTimeout(timer);
+  // }, []);
+  // return loading ? (<LoadingScreen />) : (
   return (
-    <AuthLayout>
+    <AuthLayout >
+
       <SignUpForm />
 
       {/* <div className="flex flex-col items-center gap-6">

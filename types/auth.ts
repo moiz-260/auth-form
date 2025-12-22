@@ -1,6 +1,6 @@
 export interface SignUpFormData {
     fullName: string;
-    username: string;
+    dateOfBirth: Date;
     phoneNumber: string;
     email: string;
     password: string;

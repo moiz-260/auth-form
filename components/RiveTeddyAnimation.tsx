@@ -63,7 +63,7 @@ const RiveTeddyAnimation = forwardRef<RiveTeddyAnimationRef>((props, ref) => {
     }));
 
     return (
-        <div className="w-full h-[300px] rounded-2xl overflow-hidden bg-white/40">
+        <div className="w-full h-[220px] rounded-2xl overflow-hidden bg-white/40">
             <RiveComponent />
         </div>
     );

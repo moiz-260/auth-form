@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import Image from "next/image";
 
 import GlassCard from "@/components/ui/GlassCard";
-import SignInForm from "@/components/signin/SignInForm";
-import SignUpForm from "@/components/signup/SignUpForm";
+import SignInForm from "@/components/auth/signin/SignInForm";
+import SignUpForm from "@/components/auth/signup/SignUpForm";
 
 const AuthContainer = () => {
     const [isSignIn, setIsSignIn] = useState(false);

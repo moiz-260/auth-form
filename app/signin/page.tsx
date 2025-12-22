@@ -3,7 +3,7 @@
 import React from "react";
 import AuthLayout from "@/components/layout/AuthLayout";
 import GlassCard from "@/components/ui/GlassCard";
-import SignInForm from "@/components/signin/SignInForm";
+import SignInForm from "@/components/auth/signin/SignInForm";
 
 export default function SignInPage() {
     return (
