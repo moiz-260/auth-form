@@ -1,19 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { signUpSchema } from '@/schemas/authSchema';
-import { SignUpFormData } from '@/types/auth';
-import { useFormPersistence } from '@/hooks/useFormPersistence';
-import RiveTeddyAnimation, { RiveTeddyAnimationRef } from '@/components/RiveTeddyAnimation';
-import FormInput from '@/components/ui/FormInput';
-import SuccessMessage from '@/components/successfullMessage/SuccessMessage';
+import { signUpSchema } from '@/src/schemas/authSchema';
+import { SignUpFormData } from '@/src/types/auth';
+import { useFormPersistence } from '@/src/hooks/useFormPersistence';
+import RiveTeddyAnimation, { RiveTeddyAnimationRef } from '@/src/components/RiveTeddyAnimation';
+import FormInput from '@/src/components/ui/FormInput';
+import ToastContainer from '@/src/components/ui/TostContainer';
+import toast from "react-hot-toast";
+
+
+interface Toast {
+    id: number;
+    message: string;
+    type: 'success' | 'error' | 'warning';
+}
 
 const SignUpForm: React.FC = () => {
     const [step, setStep] = useState(1);
-    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const [toasts, setToasts] = useState<Toast[]>([]);
     const [activeField, setActiveField] = useState<string>('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<string>('');
     const riveRef = useRef<RiveTeddyAnimationRef>(null);
 
     const formMethods = useForm<SignUpFormData>({
@@ -34,6 +41,16 @@ const SignUpForm: React.FC = () => {
         formMethods,
         persistFields: ["fullName", "dateOfBirth", "phoneNumber", "email"],
     });
+
+    // Toast functions
+    const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+        const id = Date.now();
+        setToasts(prev => [...prev, { id, message, type }]);
+    };
+
+    const removeToast = (id: number) => {
+        setToasts(prev => prev.filter(toast => toast.id !== id));
+    };
 
     const fullName = watch('fullName');
     const dateOfBirth = watch('dateOfBirth');
@@ -86,7 +103,6 @@ const SignUpForm: React.FC = () => {
 
     const onSubmit = async (data: SignUpFormData) => {
         setIsSubmitting(true);
-        setErrorMessage('');
 
         try {
             const response = await fetch('/api/auth/signup', {
@@ -115,19 +131,19 @@ const SignUpForm: React.FC = () => {
 
             console.log('Sign Up Success:', result);
             riveRef.current?.triggerSuccess();
-            setShowSuccessMessage(true);
+            toast.success("Your account has been created successfully! Welcome to our family.");
 
             // Clear form persistence
             localStorage.removeItem('signup-form');
 
             // Redirect after success message
             setTimeout(() => {
-                window.location.href = '/signin'; // Change to your dashboard route
-            }, 2000);
+                window.location.href = '/signin';
+            }, 1500);
         } catch (error: any) {
             console.error('Sign Up Error:', error);
-            setErrorMessage(error.message || 'Sign up failed. Please try again.');
             riveRef.current?.triggerFail();
+            toast.error(error.message || 'Sign up failed. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
@@ -140,6 +156,8 @@ const SignUpForm: React.FC = () => {
 
     return (
         <div className="flex flex-col gap-6 w-full">
+            {/* Toast Container */}
+
             <div className="flex flex-col gap-6">
                 <RiveTeddyAnimation ref={riveRef} />
 
@@ -149,12 +167,6 @@ const SignUpForm: React.FC = () => {
                     </h1>
                 </div>
             </div>
-
-            {errorMessage && (
-                <div className="p-4 rounded-2xl bg-red-50 border border-red-200">
-                    <p className="text-red-600 text-sm">{errorMessage}</p>
-                </div>
-            )}
 
             <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-6">
                 {step === 1 ? (
@@ -267,14 +279,6 @@ const SignUpForm: React.FC = () => {
                     </a>
                 </p>
             </div>
-
-            {/* Success Message */}
-            <SuccessMessage
-                isVisible={showSuccessMessage}
-                message="Your account has been created successfully! Welcome to our family."
-                onClose={() => setShowSuccessMessage(false)}
-                autoCloseDuration={4000}
-            />
         </div>
     );
 };

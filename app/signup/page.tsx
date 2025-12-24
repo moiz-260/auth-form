@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import AuthLayout from "@/components/layout/AuthLayout";
-import GlassCard from "@/components/ui/GlassCard";
-import SignUpForm from "@/components/auth/signup/SignUpForm";
+import AuthLayout from "@/src/components/layout/AuthLayout";
+import GlassCard from "@/src/components/ui/GlassCard";
+import SignUpForm from "@/src/components/auth/signup/SignUpForm";
 
 export default function SignUpPage() {
     return (

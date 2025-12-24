@@ -1,40 +1,44 @@
 "use client";
 
-import React, { useEffect } from "react";
-import Link from "next/link";
-import AuthLayout from "@/components/layout/AuthLayout";
-import SignUpForm from "@/components/auth/authContainer";
-// import LoadingScreen from "@/components/LoadingScreen";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import AuthLayout from "@/src/components/layout/AuthLayout";
+import SignInForm from "@/src/components/auth/authContainer";
+
 export default function LandingPage() {
-  // const [loading, setLoading] = React.useState(true);
-  // useEffect(() => {
-  //   // Simulate data fetching
-  //   const timer = setTimeout(() => setLoading(false), 3000);
-  //   return () => clearTimeout(timer);
-  // }, []);
-  // return loading ? (<LoadingScreen />) : (
-  return (
-    <AuthLayout >
+  const [isChecking, setIsChecking] = useState(true);
+  const router = useRouter();
 
-      <SignUpForm />
+  useEffect(() => {
+    // Check for authentication token in cookies
+    const token = Cookies.get("token");
 
-      {/* <div className="flex flex-col items-center gap-6">
-        <h1 className="text-4xl font-bold text-gray-900">Welcome</h1>
-        <div className="flex gap-4">
-          <Link
-            href="/signin"
-            className="h-14 px-10 rounded-full bg-black text-white font-semibold hover:bg-gray-800 transition-all flex items-center justify-center min-w-[160px]"
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/signup"
-            className="h-14 px-10 rounded-full bg-white text-black font-semibold hover:bg-gray-100 transition-all border border-gray-200 flex items-center justify-center min-w-[160px]"
-          >
-            Sign Up
-          </Link>
+    if (token) {
+      // User is authenticated, redirect to todolist
+      router.push("/todolist");
+    } else {
+      // No token found, user needs to sign in
+      setIsChecking(false);
+    }
+  }, [router]);
+
+  // Show loading state while checking authentication
+  if (isChecking) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
-      </div> */}
+      </div>
+    );
+  }
+
+  // User is not authenticated, show sign-in form
+  return (
+    <AuthLayout>
+      <SignInForm />
     </AuthLayout>
   );
 }

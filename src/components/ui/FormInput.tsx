@@ -9,7 +9,7 @@ interface FormInputProps {
     type: string;
     registration: UseFormRegisterReturn;
     error?: FieldError;
-    value?: string;
+    value?: string | Date;
     placeholder?: string;
     autoComplete?: string;
     onFocus?: () => void;

@@ -22,7 +22,7 @@ export const signUpSchema = yup.object().shape({
         .email("Invalid email address")
         .matches(
             /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
-            "Email must include a valid domain (e.g. user@example.com)"
+            "Email must include a valid domain"
         ).notOneOf(
             ["test@mailinator.com", "test@tempmail.com"],
             "Disposable emails are not allowed"

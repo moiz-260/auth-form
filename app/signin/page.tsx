@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import AuthLayout from "@/components/layout/AuthLayout";
-import GlassCard from "@/components/ui/GlassCard";
-import SignInForm from "@/components/auth/signin/SignInForm";
+import AuthLayout from "@/src/components/layout/AuthLayout";
+import GlassCard from "@/src/components/ui/GlassCard";
+import SignInForm from "@/src/components/auth/signin/SignInForm";
 
 export default function SignInPage() {
     return (
