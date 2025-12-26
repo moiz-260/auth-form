@@ -14,7 +14,13 @@ export const signUpSchema = yup.object().shape({
         .required("Date of birth is required")
         .max(today, "Date of birth cannot be in the future")
         .max(oneYearAgo, "You must be at least 1 year old"),
-    phoneNumber: yup.string().required("Phone number is required").matches(/^\+?[0-9]\d{10,13}$/, "Invalid phone number"),
+    phoneNumber: yup
+        .string()
+        .required("Phone number is required")
+        .matches(
+            /^(?:\+92|0|0092)3\d{9}$/,
+            "Invalid Pakistani phone number"
+        ),
     email: yup
         .string()
         .trim()

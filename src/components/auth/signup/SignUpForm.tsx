@@ -178,7 +178,7 @@ const SignUpForm: React.FC = () => {
                         />
                         <FormInput
                             key="phoneNumber"
-                            label="Phone Number"
+                            label="Phone Number(+92..)"
                             type="tel"
                             registration={register('phoneNumber')}
                             error={errors.phoneNumber}
