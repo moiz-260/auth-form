@@ -18,8 +18,8 @@ export const signUpSchema = yup.object().shape({
         .string()
         .required("Phone number is required")
         .matches(
-            /^(?:\+92|0|0092)3\d{9}$/,
-            "Invalid Pakistani phone number"
+            /^\+\d{7,15}$/,
+            "Invalid phone number (must include country code)"
         ),
     email: yup
         .string()

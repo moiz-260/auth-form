@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { signUpSchema } from '@/src/schemas/authSchema';
 import { SignUpFormData } from '@/src/types/auth';
 import { useFormPersistence } from '@/src/hooks/useFormPersistence';
 import RiveTeddyAnimation, { RiveTeddyAnimationRef } from '@/src/components/RiveTeddyAnimation';
 import FormInput from '@/src/components/ui/FormInput';
+import PhoneInput from '@/src/components/ui/PhoneInput';
 import toast from "react-hot-toast";
 import { useRouter } from 'next/navigation';
 
@@ -28,6 +29,7 @@ const SignUpForm: React.FC = () => {
         handleSubmit,
         watch,
         trigger,
+        control,
         formState: { errors },
     } = formMethods;
 
@@ -176,16 +178,22 @@ const SignUpForm: React.FC = () => {
                             onFocus={() => handleTextFieldFocus('dateOfBirth')}
                             onBlur={handleTextFieldBlur}
                         />
-                        <FormInput
-                            key="phoneNumber"
-                            label="Phone Number(+92..)"
-                            type="tel"
-                            registration={register('phoneNumber')}
-                            error={errors.phoneNumber}
-                            value={phoneNumber}
-                            autoComplete="tel"
-                            onFocus={() => handleTextFieldFocus('phoneNumber')}
-                            onBlur={handleTextFieldBlur}
+                        <Controller
+                            name="phoneNumber"
+                            control={control}
+                            render={({ field }) => (
+                                <PhoneInput
+                                    label="Phone Number"
+                                    value={field.value || ''}
+                                    onChange={field.onChange}
+                                    error={errors.phoneNumber}
+                                    onFocus={() => handleTextFieldFocus('phoneNumber')}
+                                    onBlur={() => {
+                                        field.onBlur();
+                                        handleTextFieldBlur();
+                                    }}
+                                />
+                            )}
                         />
                         <button
                             type="button"
