@@ -263,11 +263,27 @@ const FormInput: React.FC<FormInputProps> = ({
         );
     }
 
+    const { onChange, ...restRegistration } = registration;
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (type === 'tel') {
+            // Replace everything except numbers and a single + at the start
+            let val = e.target.value;
+            // Only allow + at the very beginning
+            val = val.replace(/(?!^)\+/g, '');
+            // Strip everything else that isn't a digit or +
+            val = val.replace(/[^\d+]/g, '');
+            e.target.value = val;
+        }
+        onChange(e);
+    };
+
     return (
         <div className="w-full">
             <div className="relative">
                 <input
-                    {...registration}
+                    {...restRegistration}
+                    onChange={handleChange}
                     type={inputType}
                     placeholder={placeholder}
                     autoComplete={autoComplete}
