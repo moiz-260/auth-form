@@ -77,37 +77,39 @@ const FormInput: React.FC<FormInputProps> = ({
 
     if (isDateType) {
         return (
-            <div className="relative custom-datepicker-wrapper">
-                <DatePicker
-                    selected={selectedDate}
-                    onChange={handleDateChange}
-                    onFocus={handleFocus as any}
-                    onBlur={handleBlur as any}
-                    dateFormat="MMM dd, yyyy"
-                    placeholderText=" "
-                    showYearDropdown
-                    showMonthDropdown
-                    dropdownMode="select"
-                    maxDate={new Date()}
-                    className={`w-full h-14 px-6 pt-6 pb-2 pr-12 rounded-2xl bg-white/60 border-none text-black focus:ring-2 focus:ring-black outline-none transition-all ${error ? 'ring-2 ring-red-500' : ''
-                        }`}
-                    calendarClassName="custom-calendar"
-                    wrapperClassName="w-full"
-                />
-                <label
-                    className={`absolute left-6 transition-all duration-200 pointer-events-none z-10 ${isLabelFloating
-                        ? 'top-2 text-xs text-gray-600'
-                        : 'top-1/2 -translate-y-1/2 text-gray-400'
-                        }`}
-                >
-                    {label}
-                </label>
-                <Calendar
-                    size={20}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                />
+            <div className="custom-datepicker-wrapper">
+                <div className="relative">
+                    <DatePicker
+                        selected={selectedDate}
+                        onChange={handleDateChange}
+                        onFocus={handleFocus as any}
+                        onBlur={handleBlur as any}
+                        dateFormat="MMM dd, yyyy"
+                        placeholderText=" "
+                        showYearDropdown
+                        showMonthDropdown
+                        dropdownMode="select"
+                        maxDate={new Date()}
+                        className={`w-full h-14 px-6 pt-6 pb-2 pr-12 rounded-2xl bg-white/60 border-none text-black focus:ring-2 focus:ring-black outline-none transition-all ${error ? 'ring-2 ring-red-500' : ''
+                            }`}
+                        calendarClassName="custom-calendar"
+                        wrapperClassName="w-full"
+                    />
+                    <label
+                        className={`absolute left-6 transition-all duration-200 pointer-events-none z-10 ${isLabelFloating
+                            ? 'top-2 text-xs text-gray-600'
+                            : 'top-1/2 -translate-y-1/2 text-gray-400'
+                            }`}
+                    >
+                        {label}
+                    </label>
+                    <Calendar
+                        size={20}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                    />
+                </div>
                 {error && (
-                    <span className="absolute -bottom-5 left-2 text-xs text-red-500">
+                    <span className="block mt-1 ml-2 text-xs text-red-500">
                         {error.message}
                     </span>
                 )}
@@ -262,39 +264,41 @@ const FormInput: React.FC<FormInputProps> = ({
     }
 
     return (
-        <div className="relative">
-            <input
-                {...registration}
-                type={inputType}
-                placeholder={placeholder}
-                autoComplete={autoComplete}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                className={`w-full h-14 px-6 pt-6 pb-2 ${isPasswordType ? 'pr-12' : ''
-                    } rounded-2xl bg-white/60 border-none text-black focus:ring-2 focus:ring-black outline-none transition-all peer ${error ? 'ring-2 ring-red-500' : ''
-                    }`}
-            />
-            <label
-                className={`absolute left-6 transition-all duration-200 pointer-events-none ${isLabelFloating
-                    ? 'top-2 text-xs text-gray-600'
-                    : 'top-1/2 -translate-y-1/2 text-gray-400'
-                    } peer-focus:top-2 peer-focus:text-xs peer-focus:text-gray-600`}
-            >
-                {label}
-            </label>
-
-            {isPasswordType && (
-                <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+        <div className="w-full">
+            <div className="relative">
+                <input
+                    {...registration}
+                    type={inputType}
+                    placeholder={placeholder}
+                    autoComplete={autoComplete}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                    className={`w-full h-14 px-6 pt-6 pb-2 ${isPasswordType ? 'pr-12' : ''
+                        } rounded-2xl bg-white/60 border-none text-black focus:ring-2 focus:ring-black outline-none transition-all peer ${error ? 'ring-2 ring-red-500' : ''
+                        }`}
+                />
+                <label
+                    className={`absolute left-6 transition-all duration-200 pointer-events-none ${isLabelFloating
+                        ? 'top-2 text-xs text-gray-600'
+                        : 'top-1/2 -translate-y-1/2 text-gray-400'
+                        } peer-focus:top-2 peer-focus:text-xs peer-focus:text-gray-600`}
                 >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-            )}
+                    {label}
+                </label>
+
+                {isPasswordType && (
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                )}
+            </div>
 
             {error && (
-                <span className="absolute -bottom-5 left-2 text-xs text-red-500">
+                <span className="block mt-1 ml-2 text-xs text-red-500">
                     {error.message}
                 </span>
             )}

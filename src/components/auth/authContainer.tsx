@@ -5,15 +5,14 @@ import Image from "next/image";
 import GlassCard from "@/src/components/ui/GlassCard";
 import SignInForm from "@/src/components/auth/signin/SignInForm";
 import SignUpForm from "@/src/components/auth/signup/SignUpForm";
-import { Toaster } from "react-hot-toast";
+
 
 const AuthContainer = () => {
   const [isSignIn, setIsSignIn] = useState(true); // default to sign in
 
   return (
     <div className="relative min-h-screen w-full font-sans overflow-x-hidden">
-      {/* Global Toaster */}
-      <Toaster position="top-right" reverseOrder={false} />
+
 
       <div className="fixed inset-0 z-0">
         <Image

@@ -146,7 +146,7 @@ const SignInForm: React.FC = () => {
                     <button
                         type="button"
                         onClick={() => router.push('/signup')}
-                        className="text-black font-semibold hover:underline"
+                        className="text-black font-semibold hover:underline hover: cursor-pointer"
                     >
                         Sign Up
                     </button>

@@ -30,7 +30,7 @@ export const signUpSchema = yup.object().shape({
 
     password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required').matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        "Password must contain  one uppercase letter and one special character"
+        "Password must contain at least 8 characters, one lowercase letter, one uppercase letter and one special character"
     ),
     confirmPassword: yup.string()
         .oneOf([yup.ref('password')], 'Passwords must match')
@@ -52,6 +52,6 @@ export const signInSchema = yup.object().shape({
         ),
     password: yup.string().required('Password is required').matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        "Password must contain at least one uppercase letter and one special character"
+        "Password must contain at least 8 characters, one lowercase letter,one uppercase letter and one special character"
     ),
 });

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -6,22 +8,15 @@ import { SignUpFormData } from '@/src/types/auth';
 import { useFormPersistence } from '@/src/hooks/useFormPersistence';
 import RiveTeddyAnimation, { RiveTeddyAnimationRef } from '@/src/components/RiveTeddyAnimation';
 import FormInput from '@/src/components/ui/FormInput';
-import ToastContainer from '@/src/components/ui/TostContainer';
 import toast from "react-hot-toast";
-
-
-interface Toast {
-    id: number;
-    message: string;
-    type: 'success' | 'error' | 'warning';
-}
+import { useRouter } from 'next/navigation';
 
 const SignUpForm: React.FC = () => {
     const [step, setStep] = useState(1);
-    const [toasts, setToasts] = useState<Toast[]>([]);
     const [activeField, setActiveField] = useState<string>('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const riveRef = useRef<RiveTeddyAnimationRef>(null);
+    const router = useRouter();
 
     const formMethods = useForm<SignUpFormData>({
         resolver: yupResolver(signUpSchema),
@@ -41,16 +36,6 @@ const SignUpForm: React.FC = () => {
         formMethods,
         persistFields: ["fullName", "dateOfBirth", "phoneNumber", "email"],
     });
-
-    // Toast functions
-    const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
-        const id = Date.now();
-        setToasts(prev => [...prev, { id, message, type }]);
-    };
-
-    const removeToast = (id: number) => {
-        setToasts(prev => prev.filter(toast => toast.id !== id));
-    };
 
     const fullName = watch('fullName');
     const dateOfBirth = watch('dateOfBirth');
@@ -138,7 +123,7 @@ const SignUpForm: React.FC = () => {
 
             // Redirect after success message
             setTimeout(() => {
-                window.location.href = '/signin';
+                router.push('/signin');
             }, 1500);
         } catch (error: any) {
             console.error('Sign Up Error:', error);
@@ -156,8 +141,6 @@ const SignUpForm: React.FC = () => {
 
     return (
         <div className="flex flex-col gap-6 w-full">
-            {/* Toast Container */}
-
             <div className="flex flex-col gap-6">
                 <RiveTeddyAnimation ref={riveRef} />
 
@@ -274,9 +257,13 @@ const SignUpForm: React.FC = () => {
             <div className="text-center">
                 <p className="text-gray-600">
                     Already have an account?{" "}
-                    <a href="/signin" className="text-black font-semibold hover:underline">
+                    <button
+                        type="button"
+                        onClick={() => router.push('/signin')}
+                        className="text-black font-semibold hover:underline cursor-pointer"
+                    >
                         Sign In
-                    </a>
+                    </button>
                 </p>
             </div>
         </div>

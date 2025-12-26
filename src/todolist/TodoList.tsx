@@ -107,6 +107,56 @@ const ConfirmModal: React.FC<{
     );
 };
 
+// Todo Detail Modal Component (Task 1)
+const TodoDetailModal: React.FC<{
+    isOpen: boolean;
+    todo: Todo | null;
+    onClose: () => void;
+}> = ({ isOpen, todo, onClose }) => {
+    if (!isOpen || !todo) return null;
+
+    return (
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{
+                animation: 'fadeIn 0.2s ease-out'
+            }}
+        >
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+            <div
+                className="relative bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 max-w-2xl w-full border border-white/30 max-h-[80vh] overflow-y-auto"
+                style={{
+                    animation: 'scaleIn 0.3s ease-out'
+                }}
+            >
+                <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-2xl font-bold text-gray-900 pr-8">{todo.title}</h3>
+                    <button
+                        onClick={onClose}
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">{todo.description}</p>
+                <div className="mt-6 pt-4 border-t border-gray-200">
+                    <p className="text-sm text-gray-500">
+                        Created: {new Date(todo.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })}
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const TodoList: React.FC = () => {
     const [todos, setTodos] = useState<Todo[]>([]);
     const [title, setTitle] = useState('');
@@ -119,6 +169,10 @@ const TodoList: React.FC = () => {
         isOpen: false,
         todoId: null
     });
+    const [detailModal, setDetailModal] = useState<{ isOpen: boolean; todo: Todo | null }>({
+        isOpen: false,
+        todo: null
+    });
 
     // Toast functions
     const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
@@ -130,21 +184,25 @@ const TodoList: React.FC = () => {
         setToasts(prev => prev.filter(toast => toast.id !== id));
     };
 
+    // Truncate text helper (Task 1)
+    const truncateText = (text: string, wordLimit: number = 20) => {
+        const words = text.split(' ');
+        if (words.length <= wordLimit) return text;
+        return words.slice(0, wordLimit).join(' ') + '...';
+    };
+
     // Get userId from cookies or localStorage
     useEffect(() => {
-        // First try to get from cookies
         const userIdFromCookie = Cookies.get('userId');
 
         if (userIdFromCookie) {
             setUserId(userIdFromCookie);
         } else {
-            // Fallback to localStorage
             const user = localStorage.getItem('user');
             if (user) {
                 const userData = JSON.parse(user);
                 setUserId(userData.id || userData._id || userData.email);
             } else {
-                // Redirect to home if no user found
                 window.location.href = '/';
             }
         }
@@ -211,7 +269,6 @@ const TodoList: React.FC = () => {
             if (editingId) {
                 console.log('Updating todo with ID:', editingId);
 
-                // Update existing todo
                 const response = await fetch(`/api/todos/${editingId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
@@ -231,7 +288,6 @@ const TodoList: React.FC = () => {
                     showToast(data.error || 'Failed to update todo', 'error');
                 }
             } else {
-                // Create new todo
                 const response = await fetch('/api/todos', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -261,6 +317,8 @@ const TodoList: React.FC = () => {
         setTitle(todo.title);
         setDescription(todo.description);
         setEditingId(todo._id);
+        // Scroll to form
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleCancel = () => {
@@ -270,16 +328,15 @@ const TodoList: React.FC = () => {
     };
 
     const handleLogout = () => {
-        // Clear localStorage
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-
-        // Clear cookies
         Cookies.remove('token');
         Cookies.remove('userId');
-
-        // Redirect to home page (which will show sign-in form)
         window.location.href = '/';
+    };
+
+    const handleTodoClick = (todo: Todo) => {
+        setDetailModal({ isOpen: true, todo });
     };
 
     return (
@@ -299,15 +356,20 @@ const TodoList: React.FC = () => {
                 message="Are you sure you want to delete this todo? This action cannot be undone."
             />
 
+            {/* Todo Detail Modal (Task 1) */}
+            <TodoDetailModal
+                isOpen={detailModal.isOpen}
+                todo={detailModal.todo}
+                onClose={() => setDetailModal({ isOpen: false, todo: null })}
+            />
+
             <div className="w-full max-w-4xl mx-auto">
                 <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-8 gap-4">
-                        {/* Title */}
                         <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 text-center sm:text-left leading-snug">
                             My Todo List
                         </h1>
 
-                        {/* Logout Button */}
                         <button
                             onClick={handleLogout}
                             className="flex items-center justify-center px-5 py-2 rounded-full bg-black text-white font-semibold shadow-md hover:shadow-lg hover:bg-white hover:text-black transition-all text-sm sm:text-base w-full sm:w-auto"
@@ -316,7 +378,6 @@ const TodoList: React.FC = () => {
                         </button>
                     </div>
                 </div>
-
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Add/Edit Todo Form */}
@@ -338,7 +399,6 @@ const TodoList: React.FC = () => {
                                     placeholder="Enter todo title"
                                     required
                                 />
-
                             </div>
 
                             <div>
@@ -387,26 +447,70 @@ const TodoList: React.FC = () => {
                             </GlassCard>
                         ) : (
                             todos.map((todo) => (
-                                <GlassCard key={todo._id} className="max-w-full">
-                                    <div className="flex flex-col gap-3">
-                                        <h3 className="text-xl font-bold text-gray-900">
+                                <GlassCard
+                                    key={todo._id}
+                                    className={`max-w-full relative transition-all duration-300 ${editingId === todo._id
+                                        ? 'ring-2 ring-blue-500 shadow-xl scale-[1.02]'
+                                        : ''
+                                        }`}
+                                >
+                                    {/* Task 3: Icon buttons */}
+                                    <div className="absolute top-4 right-4 flex gap-2">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleEdit(todo);
+                                            }}
+                                            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all"
+                                            title="Edit todo"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            </svg>
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteClick(todo._id);
+                                            }}
+                                            className="p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-600 transition-all"
+                                            title="Delete todo"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    {/* Task 2: Highlight editing todo */}
+                                    {editingId === todo._id && (
+                                        <div className="absolute -top-2 -left-2">
+                                            <span className="flex h-3 w-3">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    <div
+                                        className="flex flex-col gap-3 pr-20 cursor-pointer"
+                                        onClick={() => handleTodoClick(todo)}
+                                    >
+                                        <h3 className="text-xl font-bold text-gray-900 break-words">
                                             {todo.title}
                                         </h3>
-                                        <p className="text-gray-700">{todo.description}</p>
-                                        <div className="flex gap-2 mt-2">
+                                        {/* Task 1: Truncate description */}
+                                        <p className="text-gray-700 break-words">
+                                            {truncateText(todo.description, 20)}
+                                        </p>
+                                        {todo.description.split(' ').length > 20 && (
                                             <button
-                                                onClick={() => handleEdit(todo)}
-                                                className="flex-1 h-10 px-4 rounded-full bg-black text-white text-sm font-semibold hover:bg-gray-800 transition-colors"
+                                                onClick={() => handleTodoClick(todo)}
+                                                className="text-sm text-blue-600 hover:text-blue-700 font-medium text-left"
                                             >
-                                                Edit
+                                                Read more →
                                             </button>
-                                            <button
-                                                onClick={() => handleDeleteClick(todo._id)}
-                                                className="flex-1 h-10 px-4 rounded-full bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-colors"
-                                            >
-                                                Delete
-                                            </button>
-                                        </div>
+                                        )}
                                     </div>
                                 </GlassCard>
                             ))
