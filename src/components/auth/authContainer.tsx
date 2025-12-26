@@ -28,7 +28,10 @@ const AuthContainer = () => {
         <div className="container max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="flex justify-center lg:justify-start">
-              <GlassCard className="w-full max-w-[650px]">
+              {/* <GlassCard className="w-full max-w-[650px]">
+                {isSignIn ? <SignInForm /> : <SignUpForm />}
+              </GlassCard> */}
+              <GlassCard className="w-full max-w-md mx-auto"> {/* max-w-md = 28rem = 448px */}
                 {isSignIn ? <SignInForm /> : <SignUpForm />}
               </GlassCard>
             </div>
