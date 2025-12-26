@@ -265,17 +265,29 @@ const FormInput: React.FC<FormInputProps> = ({
 
     const { onChange, ...restRegistration } = registration;
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
+        const target = e.target as HTMLInputElement;
         if (type === 'tel') {
-            // Replace everything except numbers and a single + at the start
-            let val = e.target.value;
-            // Only allow + at the very beginning
-            val = val.replace(/(?!^)\+/g, '');
-            // Strip everything else that isn't a digit or +
+            let val = target.value;
+            // Immediate sanitization: remove anything that isn't a digit or a leading +
             val = val.replace(/[^\d+]/g, '');
-            e.target.value = val;
+            // Ensure + only appears at the very beginning
+            if (val.includes('+', 1)) {
+                val = val.at(0) + val.substring(1).replace(/\+/g, '');
+            }
+            // Prevent multiple + at the start
+            if (val.startsWith('++')) {
+                val = '+' + val.replace(/^\++/, '');
+            }
+            target.value = val;
         }
-        onChange(e);
+        // Call the original onChange from react-hook-form
+        onChange({
+            target: {
+                name: registration.name,
+                value: target.value
+            }
+        } as any);
     };
 
     return (
@@ -283,30 +295,25 @@ const FormInput: React.FC<FormInputProps> = ({
             <div className="relative">
                 <input
                     {...restRegistration}
-                    onChange={handleChange}
+                    onInput={handleInput}
                     type={inputType}
+                    inputMode={type === 'tel' ? 'tel' : undefined}
                     placeholder={placeholder}
                     autoComplete={autoComplete}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                     onKeyDown={(e) => {
                         if (type === 'tel') {
-                            // Allow: backspace, delete, tab, escape, enter, +
+                            // Desktop-level blocking
                             if (['Backspace', 'Delete', 'Tab', 'Escape', 'Enter'].includes(e.key) ||
                                 (e.key === '+' && !e.currentTarget.value.includes('+')) ||
-                                // Allow: Ctrl+A, Command+A
                                 (e.key === 'a' && (e.ctrlKey === true || e.metaKey === true)) ||
-                                // Allow: Ctrl+C, Command+C
                                 (e.key === 'c' && (e.ctrlKey === true || e.metaKey === true)) ||
-                                // Allow: Ctrl+V, Command+V
                                 (e.key === 'v' && (e.ctrlKey === true || e.metaKey === true)) ||
-                                // Allow: Ctrl+X, Command+X
                                 (e.key === 'x' && (e.ctrlKey === true || e.metaKey === true)) ||
-                                // Allow: home, end, left, right
                                 (e.key === 'Home' || e.key === 'End' || e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
                                 return;
                             }
-                            // Ensure that it is a number and stop the keypress
                             if ((e.shiftKey || (e.key < '0' || e.key > '9'))) {
                                 e.preventDefault();
                             }
