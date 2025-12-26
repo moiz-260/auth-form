@@ -1,12 +1,11 @@
 // src/lib/mongodb.ts
 import mongoose from 'mongoose';
 
-// This pattern is better for TypeScript
-if (!process.env.MONGODB_URI) {
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable');
 }
-
-const MONGODB_URI: string = process.env.MONGODB_URI;
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -24,7 +23,7 @@ async function connectDB(): Promise<typeof mongoose> {
   if (cached.conn) return cached.conn;
   
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI).then((mongoose) => mongoose);
+    cached.promise = mongoose.connect(MONGODB_URI!).then((mongoose) => mongoose);
   }
   
   try {
