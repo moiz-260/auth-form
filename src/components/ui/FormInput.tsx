@@ -273,6 +273,29 @@ const FormInput: React.FC<FormInputProps> = ({
                     autoComplete={autoComplete}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
+                    onKeyDown={(e) => {
+                        if (type === 'tel') {
+                            // Allow: backspace, delete, tab, escape, enter, +
+                            if (['Backspace', 'Delete', 'Tab', 'Escape', 'Enter'].includes(e.key) ||
+                                (e.key === '+' && !e.currentTarget.value.includes('+')) ||
+                                // Allow: Ctrl+A, Command+A
+                                (e.key === 'a' && (e.ctrlKey === true || e.metaKey === true)) ||
+                                // Allow: Ctrl+C, Command+C
+                                (e.key === 'c' && (e.ctrlKey === true || e.metaKey === true)) ||
+                                // Allow: Ctrl+V, Command+V
+                                (e.key === 'v' && (e.ctrlKey === true || e.metaKey === true)) ||
+                                // Allow: Ctrl+X, Command+X
+                                (e.key === 'x' && (e.ctrlKey === true || e.metaKey === true)) ||
+                                // Allow: home, end, left, right
+                                (e.key === 'Home' || e.key === 'End' || e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+                                return;
+                            }
+                            // Ensure that it is a number and stop the keypress
+                            if ((e.shiftKey || (e.key < '0' || e.key > '9'))) {
+                                e.preventDefault();
+                            }
+                        }
+                    }}
                     className={`w-full h-14 px-6 pt-6 pb-2 ${isPasswordType ? 'pr-12' : ''
                         } rounded-2xl bg-white/60 border-none text-black focus:ring-2 focus:ring-black outline-none transition-all peer ${error ? 'ring-2 ring-red-500' : ''
                         }`}

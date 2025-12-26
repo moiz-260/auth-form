@@ -97,7 +97,7 @@ const SignInForm: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col gap-6 w-full">
+        <div className="flex flex-col gap-6 w-full max-w-md mx-auto">
             <div className="flex flex-col gap-6">
                 <RiveTeddyAnimation ref={riveRef} />
 

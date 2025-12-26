@@ -27,7 +27,12 @@ const UserSchema: Schema = new Schema(
             type: String,
             required: [true, 'Phone number is required'],
             unique: true,
+            match: [
+                /^(?:\+92|0|0092)3\d{9}$/,
+                'Invalid Pakistani phone number',
+            ],
         },
+
         email: {
             type: String,
             required: [true, 'Email is required'],
