@@ -173,6 +173,7 @@ const TodoList: React.FC = () => {
         isOpen: false,
         todo: null
     });
+    const [email, setEmail] = useState<string>('');
 
     // Toast functions
     const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
@@ -207,6 +208,32 @@ const TodoList: React.FC = () => {
             }
         }
     }, []);
+
+    // Get email from cookies or localStorage
+    useEffect(() => {
+        const emailFromCookie = Cookies.get('email');
+
+        if (emailFromCookie) {
+            setEmail(emailFromCookie);
+            return;
+        }
+
+        const user = localStorage.getItem('user');
+        if (user) {
+            try {
+                const userData = JSON.parse(user);
+                if (userData.email) {
+                    setEmail(userData.email);
+                    return;
+                }
+            } catch (err) {
+                console.error('Invalid user object in localStorage');
+            }
+        }
+
+        window.location.href = '/';
+    }, []);
+
 
     // Fetch todos
     useEffect(() => {
@@ -291,9 +318,9 @@ const TodoList: React.FC = () => {
                 const response = await fetch('/api/todos', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, description, userId }),
+                    body: JSON.stringify({ title, description, userId, email }),
                 });
-
+                console.log(email)
                 const data = await response.json();
 
                 if (response.ok) {

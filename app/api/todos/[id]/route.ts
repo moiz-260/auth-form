@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/src/lib/mongodb';
 import Todo from '@/src/models/Todo';
 import mongoose from 'mongoose';
+import { upsertTodoToPinecone, deleteTodoFromPinecone } from '@/src/lib/ai';
 
 // PUT - Update a todo
 export async function PUT(
@@ -51,6 +52,19 @@ export async function PUT(
             );
         }
 
+        // Sync with Pinecone
+        try {
+            await upsertTodoToPinecone({
+                id: todo._id.toString(),
+                title: todo.title,
+                description: todo.description,
+                userId: todo.userId,
+                email: todo.email,
+            });
+        } catch (error) {
+            console.error('Failed to update Pinecone:', error);
+        }
+
         console.log('PUT - Successfully updated todo:', todo);
         return NextResponse.json({ todo }, { status: 200 });
     } catch (error: any) {
@@ -88,15 +102,17 @@ export async function DELETE(
 
         if (!todo) {
             console.error('DELETE - Todo not found for ID:', id);
-
-            // Check if todo exists with different query
-            const exists = await Todo.findById(id);
-            console.log('DELETE - Todo exists check:', exists);
-
             return NextResponse.json(
                 { error: 'Todo not found' },
                 { status: 404 }
             );
+        }
+
+        // Sync with Pinecone
+        try {
+            await deleteTodoFromPinecone(id);
+        } catch (error) {
+            console.error('Failed to delete from Pinecone:', error);
         }
 
         console.log('DELETE - Successfully deleted todo:', todo);

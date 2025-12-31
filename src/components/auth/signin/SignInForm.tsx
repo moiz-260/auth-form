@@ -72,8 +72,10 @@ const SignInForm: React.FC = () => {
             // Store token in localStorage and cookies
             localStorage.setItem("token", result.token);
             localStorage.setItem("user", JSON.stringify(result.user));
+            localStorage.setItem("email", result.user.email);
             Cookies.set("token", result.token, { expires: 7 });
             Cookies.set("userId", result.user.id, { expires: 7 });
+            Cookies.set("email", result.user.email, { expires: 7 });
 
             riveRef.current?.triggerSuccess();
             toast.success("Login successful! Welcome back to your account.");
