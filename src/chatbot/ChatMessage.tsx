@@ -1,4 +1,5 @@
 import React from "react";
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: string;
@@ -13,6 +14,13 @@ interface ChatMessageProps {
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const isUser = message.sender === "user";
+  const normalizeText = (text: string) => {
+    return text
+      .replace(/\r\n/g, '\n')        // normalize line endings
+      .replace(/\n{3,}/g, '\n\n')    // max 1 empty line
+      .trim();
+  };
+
 
   return (
     <div
@@ -62,12 +70,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         {/* Message Bubble */}
         <div
           className={`px-3 py-2 sm:px-4 sm:py-3 rounded-2xl ${isUser
-              ? "bg-black text-white rounded-tr-none"
-              : "bg-white/60 backdrop-blur-xl text-gray-800 border border-white/30 rounded-tl-none"
+            ? "bg-black text-white rounded-tr-none"
+            : "bg-white/60 backdrop-blur-xl text-gray-800 border border-white/30 rounded-tl-none"
             }`}
         >
-          <p className="text-sm whitespace-pre-wrap break-words">
-            {message.text}
+          <p className="text-sm whitespace-pre-line break-words"
+          >
+            <ReactMarkdown>{normalizeText(message.text)}</ReactMarkdown>
           </p>
           <p
             className={`text-xs mt-1 ${isUser ? "text-gray-300" : "text-gray-500"

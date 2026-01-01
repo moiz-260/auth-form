@@ -11,19 +11,15 @@ export default function LandingPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check for authentication token in cookies
     const token = Cookies.get("token");
 
     if (token) {
-      // User is authenticated, redirect to todolist
       router.push("/todolist");
     } else {
-      // No token found, user needs to sign in
       setIsChecking(false);
     }
   }, [router]);
 
-  // Show loading state while checking authentication
   if (isChecking) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -34,8 +30,6 @@ export default function LandingPage() {
       </div>
     );
   }
-
-  // User is not authenticated, show sign-in form
   return (
     <AuthLayout>
       <SignInForm />
